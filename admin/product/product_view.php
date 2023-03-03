@@ -41,7 +41,7 @@
 
 
     //추가이미지를 product_image_table에서 조회하고 결과를 $attached_imgs에 담자
-    $query3 = "SELECT * from product_image_table where pid=".$pid;
+    $query3 = "SELECT * from product_image_table where pid='$pid' and status=1";
     $result3 = $mysqli ->query($query3) or die("Query Error =>".$mysqli->error);
         
     while($rs3 = $result3 ->fetch_object()){
