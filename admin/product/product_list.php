@@ -87,7 +87,7 @@
     $order = " order by pid desc";//최근 등록 순으로 정렬
     $limit = " limit $startLimit, $pageCount"; //0번째에서 10개까지  
     $query = $sql.$order.$limit; //쿼리 문장 조합
-    print_r($query);
+  
 
     $result = $mysqli->query($query) or die("query error => ".$mysqli->error);
     while($rs = $result->fetch_object()){

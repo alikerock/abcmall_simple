@@ -1,4 +1,5 @@
 <?php 
+    ob_start();
     include $_SERVER["DOCUMENT_ROOT"]."/inc/head.php";
     $root = $_SERVER["DOCUMENT_ROOT"];
 
@@ -41,6 +42,29 @@
             $attached_imgs[] = $rs3;
         }
 
+        $i=0;//쿠키에 상품정보를 등록할 사용할 인덱스
+        
+        if($_COOKIE['recently_products']){
+            $prs = json_decode($_COOKIE['recently_products']);
+            if(!in_array($rs,$prs)){
+                if(sizeof($prs)>= 3){
+                    unset($prs[0]);
+                }
+                ksort($prs); //키값으로 알파벳순 정렬
+                foreach($prs as $ps){
+                    $cvalarray[$i]=$ps; 
+                    $i++;
+                }
+                $cvalarray[$i]=$rs; 
+                $cval = json_encode($cvalarray);
+                setcookie('recently_products',$cval, time()+86400);
+            }
+
+        }else{
+            $cvalarray[$i]=$rs;  
+            $cval = json_encode($cvalarray);
+            setcookie('recently_products',$cval, time()+86400);
+        }
 
 ?>
 
@@ -125,7 +149,7 @@
 
                             <h4 class="title"><a href="#"><?php echo $rs -> name;?></a></h4>
 
-                            <h4 class="price"><?php echo number_format($rs->price);?>원</h4>
+                            <h4 class="price"><?php echo number_format($rs->sale_price);?>원</h4>
 
                             <p class="available">Available: 
                                 <?php if($rs->cnt > 0) {?>
@@ -143,45 +167,46 @@
                                 <i class="fa fa-star" aria-hidden="true"></i>
                                 <i class="fa fa-star-o" aria-hidden="true"></i>
                             </div>
-                            <?php if($options1) { ?>
-                            <div class="widget size mb-50">
-                                <h6 class="widget-title"><?php echo $op1 -> option_name; ?> </h6>
-                                <div class="widget-desc">
-                                    <ul>
-                                    <?php foreach($options1 as $op1) { ?>
-                                        <li>
-                                            <?php echo $op1 -> option_name; ?> 
-                                            (+<i class="price"><?php echo $op1 -> option_price; ?></i>)
-                                        </li>                        
-                                    <?php } ?> 
-                                    </ul>
-                                </div>
+                            <div>
+                                <img src="" alt="" id="pimg">   
                             </div>
-                            <?php } ?>
-                            <?php if($options2) { ?>
-                            <div class="widget size mb-50">
-                                <h6 class="widget-title"><?php echo $op2 -> option_name; ?> </h6>
-                                <div class="widget-desc">
-                                    <ul>
-                                    <?php foreach($options2 as $op2) { ?>
-                                        <li>
-                                            <?php echo $op2 -> option_name; ?> 
-                                            (+<i class="price"><?php echo $op2 -> option_price; ?></i>)
-                                        </li>                        
-                                    <?php } ?> 
-                                    </ul>
-                                </div>
+                            <div class="total">
+                                    합계: <span id="price"><?php echo number_format($rs->sale_price);?></span>원
                             </div>
-                            <?php } ?>
+                            <?php if(isset($options1)){ ?>
+                                <div class="widget size mb-50">
+                                <?php foreach($options1 as $op1){?>
+                                    <input type="radio" name="poption1" id="poption1_<?php echo $op1->poid;?>" value="<?php echo $op1->poid;?>">
+                                        <span  onclick="jQuery('#poption1_<?php echo $op1->poid;?>').click();" style="content:url(<?php echo $op1->image_url;?>);height:100px;width:100px;"></span>
+                                    </input>                                
+                                <?php }?>
+                                </div>
+                            <?php }?>
+                            <?php if(isset($options2)){ ?>
+                            <div class="widget size mb-50">
+
+                                <?php foreach($options2 as $op2){
+                                    $option_name=$op2->option_name;
+                                    if($op2->option_price)$option_name.="(+".number_format($op2->option_price).")";
+                                    ?>
+                                    <input type="radio" name="poption2" id="poption2_<?php echo $op2->poid;?>" value="<?php echo $op2->poid;?>">
+                                        <span  onclick="jQuery('#poption2_<?php echo $op2->poid;?>').click();"><?php echo $option_name;?></span>
+                                    </input>
+                                <?php }?>
+
+
+                            </div>
+                            <?php }?>
+
 
                             <!-- Add to Cart Form -->
                             <form class="cart clearfix mb-50 d-flex" method="post">
                                 <div class="quantity">
                                     <span class="qty-minus" onclick="var effect = document.getElementById('qty'); var qty = effect.value; if( !isNaN( qty ) &amp;&amp; qty &gt; 1 ) effect.value--;return false;"><i class="fa fa-minus" aria-hidden="true"></i></span>
-                                    <input type="number" class="qty-text" id="qty" step="1" min="1" max="12" name="quantity" value="1">
+                                    <input type="number" class="qty-text" id="qty" step="1" min="1" max="12" name="cnt" value="1">
                                     <span class="qty-plus" onclick="var effect = document.getElementById('qty'); var qty = effect.value; if( !isNaN( qty )) effect.value++;return false;"><i class="fa fa-plus" aria-hidden="true"></i></span>
                                 </div>
-                                <button type="submit" name="addtocart" value="5" class="btn cart-submit d-block">Add to cart</button>
+                                <button type="button" name="addtocart" value="5" class="btn cart-submit d-block" onclick="cart_ins()">Add to cart</button>
                             </form>
 
                             <div id="accordion" role="tablist">
@@ -193,8 +218,8 @@
                                     </div>
 
                                     <div id="collapseOne" class="collapse show" role="tabpanel" aria-labelledby="headingOne" data-parent="#accordion">
-                                        <div class="card-body">
-                                            <?php echo $rs -> content;?>
+                                        <div class="card-body">                                            
+                                            <?php echo nl2br(stripslashes($rs->content));?>
                                         </div>
                                     </div>
                                 </div>
@@ -410,7 +435,45 @@
             </div>
         </section>
 
+<script>    
+    $("input[name='poption1'], input[name='poption2']").change(function(){
+        
+        console.log('선택');
 
+        let poid1 = $("input[name='poption1']:checked").val();
+        let poid2 = $("input[name='poption2']:checked").val();
+        let data = {
+            poid1:poid1,
+            poid2:poid2
+        }
+
+        $.ajax({
+            async:false,
+            type:'post',
+            url:'admin/product/option_select.php',
+            data:data,
+            dataType:'json',
+            success:function(result){
+                let price1 = result.option_price1;
+                let price2 = result.option_price2;
+
+                (price1 !== null)? price1 = parseInt(price1) : price1 = 0;
+                (price2 !== null)? price2 = parseInt(price2) : price2 = 0;
+
+                let price=price1+price2+<?php echo $rs->sale_price;?>;
+
+                $("#pimg").attr('src', result.image_url);
+                $('#price').text(price);
+            }
+        });
+
+        function number_format(num){
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g,',');
+        }
+
+
+    });
+</script>
 <?php 
     include $_SERVER["DOCUMENT_ROOT"]."/inc/tail.php";
 ?>

@@ -26,7 +26,7 @@
 
     <!-- Responsive CSS -->
     <link href="css/responsive.css" rel="stylesheet">
-
+    <script src="js/jquery/jquery-2.2.4.min.js"></script>
 </head>
 
 <body>
@@ -118,23 +118,27 @@
                                                 class="cart_quantity">2</span> <i class="ti-bag"></i> recent viewed</a>
                                         <!-- Cart List Area Start -->
                                         <ul class="recent-list">
+                                            <?php
+                                            if($_COOKIE['recently_products']){
+                                                $prs = json_decode($_COOKIE['recently_products']);//문자열->배열
+                                                krsort($prs);//키값 역순, 최근상품을 위로
+                                                
+                                                foreach($prs as $ps){                                                
+                                            ?>    
                                             <li>
-                                                <a href="#" class="image"><img src="img/product-img/product-10.jpg"
+                                                <a href="product.php?pid=<?php echo $ps->pid;?>" class="image">
+                                                    <img src="<?php echo $ps->thumbnail;?>"
                                                         class="cart-thumb" alt=""></a>
                                                 <div class="cart-item-desc">
-                                                    <h6><a href="#">Women's Fashion</a></h6>
-                                                    <h6>$20</h6>
+                                                    <h6><a href="product.php?pid=<?php echo $ps->pid;?>"><?php echo $ps->name;?></a></h6>
+                                                    <h6><?php echo $ps->sale_price;?></h6>
                                                 </div>
 
                                             </li>
-                                            <li>
-                                                <a href="#" class="image"><img src="img/product-img/product-11.jpg"
-                                                        class="cart-thumb" alt=""></a>
-                                                <div class="cart-item-desc">
-                                                    <h6><a href="#">Women's Fashion</a></h6>
-                                                    <h6>$20</h6>
-                                                </div>
-                                            </li>
+                                            <?php
+                                                }                                                
+                                                }
+                                            ?> 
 
                                         </ul>
                                     </div>
