@@ -206,9 +206,9 @@
                             <!-- Add to Cart Form -->
                             <form class="cart clearfix mb-50 d-flex" method="post">
                                 <div class="quantity">
-                                    <span class="qty-minus" onclick="var effect = document.getElementById('qty'); var qty = effect.value; if( !isNaN( qty ) &amp;&amp; qty &gt; 1 ) effect.value--;return false;"><i class="fa fa-minus" aria-hidden="true"></i></span>
-                                    <input type="number" class="qty-text" id="qty" step="1" min="1" max="12" name="cnt" value="1">
-                                    <span class="qty-plus" onclick="var effect = document.getElementById('qty'); var qty = effect.value; if( !isNaN( qty )) effect.value++;return false;"><i class="fa fa-plus" aria-hidden="true"></i></span>
+                                    <span class="qty-minus" onclick="var effect = document.getElementById('cnt'); var qty = effect.value; if( !isNaN( qty ) &amp;&amp; qty &gt; 1 ) effect.value--;return false;"><i class="fa fa-minus" aria-hidden="true"></i></span>
+                                    <input type="number" class="qty-text" id="cnt" step="1" min="1" max="12" name="cnt" value="1">
+                                    <span class="qty-plus" onclick="var effect = document.getElementById('cnt'); var qty = effect.value; if( !isNaN( qty )) effect.value++;return false;"><i class="fa fa-plus" aria-hidden="true"></i></span>
                                 </div>
                                 <button type="button" name="addtocart" value="5" class="btn cart-submit d-block" onclick="cart_ins()">Add to cart</button>
                             </form>

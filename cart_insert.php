@@ -15,7 +15,7 @@ $result = $mysqli ->query($query) or die("query error =>".$mysqli_error);
 
 $rs = $result -> fetch_object();
 if($rs->cartid){
-    $sql = "UPDATE cart set cnt='".$cnt."', options='".$opts."' where ssid='".$ssid."', and pid = '".$pid."'";
+    $sql = "UPDATE cart set cnt='".$cnt."', options='".$opts."' where ssid='".$ssid."' and pid = '".$pid."'";
     $result = $mysqli ->query($sql) or die("query error =>".$mysqli_error);
 } else{
     $sql = "INSERT INTO  `cart`
