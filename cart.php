@@ -36,7 +36,7 @@
                                     <?php 
                                         foreach($rsc as $p){
                                     ?>
-                                    <tr>
+                                    <tr id="<?php echo $p->cartid;?>">
                                         <td class="cart_product_img d-flex align-items-center">
                                             <a href="product.php?pid=<?php echo $p -> pid;?>"><img src="<?php echo $p->thumbnail; ?>" alt="Product"></a>
                                             <h6><?php echo $p->name; ?></h6>
@@ -45,12 +45,12 @@
                                         <td class="qty">
                                             <div class="quantity">
                                                 <span class="qty-minus"
-                                                    onclick="var effect = document.getElementById('qty'); var qty = effect.value; if( !isNaN( qty ) &amp;&amp; qty &gt; 1 ) effect.value--;return false;"><i
+                                                    onclick="var effect = document.getElementById('qty_<?php echo $p->cartid;?>'); var qty = effect.value; if( !isNaN( qty ) &amp;&amp; qty &gt; 1 ) effect.value--;return false;"><i
                                                         class="fa fa-minus" aria-hidden="true"></i></span>
-                                                <input type="number" class="qty-text" id="qty" step="1" min="1" max="99"
+                                                <input type="number" class="qty-text" id="qty_<?php echo $p->cartid;?>" step="1" min="1" max="99"
                                                     name="quantity" value="<?php echo $p->cnt;?>">
                                                 <span class="qty-plus"
-                                                    onclick="var effect = document.getElementById('qty'); var qty = effect.value; if( !isNaN( qty )) effect.value++;return false;"><i
+                                                    onclick="var effect = document.getElementById('qty_<?php echo $p->cartid;?>'); var qty = effect.value; if( !isNaN( qty )) effect.value++;return false;"><i
                                                         class="fa fa-plus" aria-hidden="true"></i></span>
                                             </div>
                                         </td>
@@ -134,7 +134,26 @@
             </div>
         </div>
         <!-- ****** Cart Area End ****** -->
+<script>
+    $('.qty-minus').add('.qty-plus').click(function(){
+        let $this = $(this).closest('tr');
+        let cid = $this.attr('id');
+        let qty = parseInt($('#qty_'+cid).val());
 
+        let unitprice =$this.find('.price span').text();
+        let price = parseInt(unitprice.replace(',', ''));
+        let totalprice = qty*price;
+        $this.find('.total_price span').text(totalprice);
+
+        let data = {
+            cid:cid,
+            qty:qty,
+            price:totalprice
+        }
+        
+
+    });
+</script>
 <?php 
     include $_SERVER["DOCUMENT_ROOT"]."/inc/tail.php";
 ?>
