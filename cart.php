@@ -123,9 +123,9 @@
                             </div>
 
                             <ul class="cart-total-chart">
-                                <li><span>Subtotal</span> <span><?php echo number_format($p->sale_price*$p->cnt) ;?></span></li>
+                                <li><span>Subtotal</span> <span id="subtotal"></span></li>
                                 <li><span>Shipping</span> <span>Free</span></li>
-                                <li><span><strong>Total</strong></span> <span><strong><?php echo number_format($p->sale_price*$p->cnt) ;?></strong></span></li>
+                                <li><span><strong>Total</strong></span> <span><strong></strong></span></li>
                             </ul>
                             <a href="checkout.html" class="btn karl-checkout-btn">Proceed to checkout</a>
                         </div>
@@ -135,6 +135,38 @@
         </div>
         <!-- ****** Cart Area End ****** -->
 <script>
+    cal_Sum();
+
+     $('.cart_item_del').click(function(){
+        let $this = $(this).closest('tr');
+        let cid = $this.attr('id');
+
+        if(!confirm('해당 상품을 정말 삭제할까요?')){
+            return false;
+        }
+        let data = {
+            cid:cid
+        }
+    
+        $.ajax({
+            async:false,
+            type:'post',
+            url:'cart_del.php',
+            data:data,
+            dataType:'json',
+            error:function(){
+                console.log('error');
+            },
+            success:function(result){               
+                if(result.result == true){
+                   $('#'+cid).remove();
+                   cal_Sum();
+                }                
+            }
+        });
+
+     });                               
+
     $('.qty-minus').add('.qty-plus').click(function(){
         let $this = $(this).closest('tr');
         let cid = $this.attr('id');
@@ -143,16 +175,48 @@
         let unitprice =$this.find('.price span').text();
         let price = parseInt(unitprice.replace(',', ''));
         let totalprice = qty*price;
-        $this.find('.total_price span').text(totalprice);
+        $this.find('.total_price span').text(number_format(totalprice));
+
+        cal_Sum();
 
         let data = {
             cid:cid,
             qty:qty,
             price:totalprice
         }
-        
+        $.ajax({
+            async:false,
+            type:'post',
+            url:'cart_edit.php',
+            data:data,
+            dataType:'json',
+            error:function(){
+                console.log('error');
+            },
+            success:function(result){               
+                if(result.result =='ok'){
+                    console.log('cart updated!')
+                }                
+            }
+        });
 
     });
+
+    function cal_Sum(){
+        let cart_item = $('.cart-table tbody tr');
+        let sum = 0;
+        cart_item.each(function(){
+            let total = $(this).find('.total_price span').text();
+            let totalmd = parseInt(total.replace(',',''));
+            sum+=totalmd;
+        });
+        $('#subtotal').text(number_format(sum));
+    }
+
+    function number_format(num){
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g,',');
+    }   
+
 </script>
 <?php 
     include $_SERVER["DOCUMENT_ROOT"]."/inc/tail.php";
