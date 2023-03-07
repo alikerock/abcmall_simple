@@ -1,14 +1,18 @@
 <?php 
     ob_start();
     include $_SERVER["DOCUMENT_ROOT"]."/inc/head.php";
-    $root = $_SERVER["DOCUMENT_ROOT"];
 
     $pid = $_GET['pid'];
 
-    $query = "SELECT * from products where pid=".$pid;
+    $query = "SELECT * from products where status=1 and pid=".$pid;
     $result = $mysqli ->query($query) or die("Query Error =>".$mysqli->error);
     $rs = $result ->fetch_object();
 
+    if(!$rs or !$rs->cnt){
+        echo "<script>alert('제품이 없거나 품절된 제품입니다.');location.href='/';</script>";
+        exit;
+    }
+    
         //옵션을 product_options에서 조회하고 그 결과를 $options에 담자
         $query2 = "SELECT * from product_options where pid=".$pid;
         $result2 = $mysqli ->query($query2) or die("Query Error =>".$mysqli->error);
@@ -293,11 +297,11 @@
                                             <div class="quantity">
                                                 <span class="qty-minus" onclick="var effect = document.getElementById('qty'); var qty = effect.value; if( !isNaN( qty ) &amp;&amp; qty &gt; 1 ) effect.value--;return false;"><i class="fa fa-minus" aria-hidden="true"></i></span>
 
-                                                <input type="number" class="qty-text" id="qty2" step="1" min="1" max="12" name="quantity" value="1">
+                                                <input type="number" class="qty-text" id="cnt" step="1" min="1" max="12" name="cnt" value="1">
 
                                                 <span class="qty-plus" onclick="var effect = document.getElementById('qty'); var qty = effect.value; if( !isNaN( qty )) effect.value++;return false;"><i class="fa fa-plus" aria-hidden="true"></i></span>
                                             </div>
-                                            <button type="submit" name="addtocart" value="5" class="cart-submit">Add to cart</button>
+                                            <button type="button" name="addtocart" value="5" class="cart-submit" onclick="cart_ins()">Add to cart</button>
                                             <!-- Wishlist -->
                                             <div class="modal_pro_wishlist">
                                                 <a href="wishlist.html" target="_blank"><i class="ti-heart"></i></a>
@@ -463,16 +467,40 @@
                 let price=price1+price2+<?php echo $rs->sale_price;?>;
 
                 $("#pimg").attr('src', result.image_url);
-                $('#price').text(price);
+                $('#price').text(number_format(price));
             }
         });
-
-        function number_format(num){
-            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g,',');
-        }
-
-
     });
+    function number_format(num){
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g,',');
+    }       
+    function cart_ins(){
+        let poid1 = $("input[name='poption1']:checked").val();
+        let poid2 = $("input[name='poption2']:checked").val();
+        let opts = poid1+'||'+poid2;
+        let cnt = $('#cnt').val();
+        let data = {
+            pid : <?php echo $pid ?>;
+            opts : opts,
+            cnt : cnt
+        }
+        $.ajax({
+            async: false,
+            type:'post',
+            url:'cart_insert.php',
+            data: data,
+            dataType :'json',
+            success:function(result){
+                if(result.result == 'ok'){
+                    alert('장바구니에 입력했습니다.');
+                } else{
+                    alert('실패했습니다. 다시 시도해주세요.');
+                }
+            }
+        });
+    }
+
+
 </script>
 <?php 
     include $_SERVER["DOCUMENT_ROOT"]."/inc/tail.php";

@@ -19,11 +19,11 @@
     $sale_ratio=$_POST["sale_ratio"];//세일비율
     $cnt=$_POST["cnt"];//재고
     $contents=rawurldecode($_POST['contents']);//제품 설명
-    $ismain=$_POST["ismain"];//메인
-    $isnew=$_POST["isnew"];//신상품
-    $isbest=$_POST["isbest"];//베스트
-    $isrecom=$_POST["isrecom"];//추천
-    $locate=$_POST["locate"];//위치
+    $ismain=$_POST["ismain"] ?? 0 ;//메인
+    $isnew=$_POST["isnew"] ?? 0; //신상품
+    $isbest=$_POST["isbest"] ?? 0;//베스트
+    $isrecom=$_POST["isrecom"] ?? 0;//추천
+    $locate=$_POST["locate"] ?? 0; //위치
     $sale_end_date=$_POST["sale_end_date"];//판매종료일
     $file_table_id=$_POST["file_table_id"];//이미지 32,33,
     $file_table_id=rtrim($file_table_id,",");//오른쪽 끝에 , 삭제 32,33
