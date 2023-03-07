@@ -1,5 +1,4 @@
 <?php
-
 session_start();
 ini_set('display_errors',1);
 
@@ -11,7 +10,7 @@ $cnt =  $_POST['cnt'];
 $ssid = session_id();
 $userid = $_SESSION['UID'];
 
-$query = "SELECT cartid from cart where ssid='".$ssid."', and pid = '".$pid."'";
+$query = "SELECT cartid from cart where ssid='".$ssid."' and pid = '".$pid."'";
 $result = $mysqli ->query($query) or die("query error =>".$mysqli_error);
 
 $rs = $result -> fetch_object();
@@ -41,5 +40,6 @@ if($result){
     $data = array('result' => 'fail');
 }
 echo json_encode($data);
+
 
 ?>

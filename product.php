@@ -475,22 +475,26 @@
             return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g,',');
     }       
     function cart_ins(){
-        let poid1 = $("input[name='poption1']:checked").val();
-        let poid2 = $("input[name='poption2']:checked").val();
-        let opts = poid1+'||'+poid2;
+        let poid1 = $("input[name='poption1']:checked").val() ?? '';
+        let poid2 = $("input[name='poption2']:checked").val() ?? '';
+        let opts = poid1 +'||'+ poid2;
         let cnt = $('#cnt').val();
         let data = {
-            pid : <?php echo $pid ?>;
+            pid : <?php echo $pid ?>,
             opts : opts,
             cnt : cnt
         }
+        console.log(data);
+
         $.ajax({
             async: false,
             type:'post',
             url:'cart_insert.php',
             data: data,
             dataType :'json',
+            error:function(){alert('연결에러')},
             success:function(result){
+                console.log(result);
                 if(result.result == 'ok'){
                     alert('장바구니에 입력했습니다.');
                 } else{
