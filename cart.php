@@ -151,11 +151,13 @@
                                 <h5>Cart total</h5>
                                 <p>Final info</p>
                             </div>
-
+                            <input type="hidden" name="cart_total" id="cart_total">    
                             <ul class="cart-total-chart">
                                 <li><span>Subtotal</span> <span id="subtotal"></span></li>
-                                <li><span>Shipping</span> <span>Free</span></li>
-                                <li><span><strong>Total</strong></span> <span><strong></strong></span></li>
+                                <li><span>coupon</span> <span id="coupon_price"></span></li>
+                                <li><span><strong>Total</strong></span> 
+                                <span><strong id="total_amount"></strong></span>
+                            </li>
                             </ul>
                             <a href="checkout.html" class="btn karl-checkout-btn">Proceed to checkout</a>
                         </div>
@@ -241,11 +243,40 @@
             sum+=totalmd;
         });
         $('#subtotal').text(number_format(sum));
+        $('#cart_total').val(sum);
     }
 
     function number_format(num){
             return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g,',');
     }   
+
+    $('#coupon').change(function(){
+        let ucid = $(this).val();
+        let cart_total = $('#cart_total').val();
+        let data = {
+            ucid :ucid,
+            cart_total:cart_total
+        }
+        $.ajax({
+            async:false,
+            type:'post',
+            url:'coupon_cal.php',
+            data:data,
+            dataType:'json',
+            success:function(data){
+                if(data.result == false){
+                    alert(data.msg);
+                    $('#coupon_price').text(0);
+                    return false;
+                } else if(data.result == true){
+                    $('#coupon_price').text('-'+data.coupon_price);
+                    $('#total_amount').text(number_format(cart_total - parseInt(data.coupon_price)));
+                }
+
+            }
+        });
+    });
+
 
 </script>
 <?php 
