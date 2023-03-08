@@ -26,10 +26,35 @@ include $_SERVER["DOCUMENT_ROOT"]."/inc/header.php";
         </div>
        
         <div class="col-12">
-            <button class="btn btn-primary" type="submit">가입하기</button>
+            <button type="button" class="btn btn-primary" id="signup">가입하기</button>
         </div>
         </form>
     </div>
+    <script>
+        $('#signup').click(function(){
+            let userid = $('#userid').val();
+            let email = $('#email').val();
+
+            var data={
+                userid : userid,
+                email:email
+            }
+            $.ajax({
+                async:false,
+                type:'post',
+                url:'signup_check.php',
+                data:data,
+                dataType:'json',
+                success : function(result){
+                    if(result.cnt>0){
+                        alert('아이디 또는 이메일이 이미 있습니다, 다시 확인해주세요');
+                    } else{
+                        $('form').submit();
+                    }
+                }
+            })
+        });
+    </script>
 <?php
 include $_SERVER["DOCUMENT_ROOT"]."/inc/footer.php";
 ?>
