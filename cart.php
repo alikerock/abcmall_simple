@@ -34,6 +34,7 @@
                                 </thead>
                                 <tbody>
                                     <?php 
+                                        if(isset($rsc)){
                                         foreach($rsc as $p){
                                     ?>
                                     <tr id="<?php echo $p->cartid;?>">
@@ -59,6 +60,15 @@
                                     </tr>
                                     <?php 
                                        }
+                                    } else{
+                                    ?>
+                                      <tr>
+                                        <td colspan="4">
+                                            장바구니에 상품이 없습니다.
+                                        </td>
+                                      </tr>  
+                                    <?php 
+                                       }                                    
                                     ?>
                                 </tbody>
                             </table>
@@ -83,10 +93,30 @@
                                 <h5>Cupon code</h5>
                                 <p>Enter your cupone code</p>
                             </div>
-                            <form action="#">
-                                <input type="search" name="search" placeholder="#569ab15">
-                                <button type="submit">Apply</button>
-                            </form>
+                           <?php
+                           $cq = "SELECT ucid, c.coupon_name
+                            FROM user_coupons uc
+                            JOIN coupons c
+                            ON c.cid = uc.couponid
+                            WHERE c.status = 2 and uc.status = 1 and uc.use_max_date >= now() and uc.userid = '".$_SESSION['UID']."'";
+                           $cq_result = $mysqli -> query($cq) or die('Query error=>'.$mysqli->error);
+                           while($cr=$cq_result -> fetch_object()){
+                                $csa[]=$cr;
+                           }
+                           ?> 
+                           <select name="coupon" id="coupon">
+                                <option value="">쿠폰을 선택해주세요</option>
+                                
+                                <?php
+                                    if(isset($csa)){
+                                    foreach($csa as $c){
+                                ?>
+                                <option value="<?php echo $c -> ucid; ?>"><?php echo $c -> coupon_name; ?></option>
+                                <?php
+                                   }
+                                }
+                                ?>
+                           </select>
                         </div>
                     </div>
                     <div class="col-12 col-md-6 col-lg-4">
