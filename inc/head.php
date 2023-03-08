@@ -96,6 +96,24 @@
                     </li>
                 </ul>
             </div>
+            <div class="login">
+                <?php
+                if($_SESSION['UID']){
+                ?>
+                <p>
+                    <input type="submit" value="LOGOUT" onclick="location.replace('member/logout_action.php');">
+                </p>
+                <?php
+                } else{
+                ?>
+                <p>
+                    <a href="member/signin.php">Login </a> / 
+                    <a href="member/signup.php">Sign Up</a>
+                </p>
+                <?php
+                }
+                ?>                
+            </div>
         </div>
     </div>
 
