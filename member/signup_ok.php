@@ -1,6 +1,7 @@
 <?php session_start();
 //db 연결
 include $_SERVER["DOCUMENT_ROOT"]."/inc/dbcon.php";
+include $_SERVER["DOCUMENT_ROOT"]."/inc/lib.php";
 
 
 //넘어온 값을 변수 지정
@@ -25,11 +26,6 @@ try {
     )";
     $rs=$mysqli->query($query) or die($mysqli->error);
 
-    //쿠폰목록 조회
-    // $cp_sql = "SELECT cid from coupons where cid=1";
-    // $cp_sql_result= $mysqli -> query($cp_sql) or die("query error:".$mysqli->error);
-    // $cp_result = $cp_sql_result -> fetch_object();
-
     user_coupon($userid, 1, '회원가입');
         
     $mysqli->commit();//디비에 커밋한다.
@@ -44,23 +40,6 @@ try {
 }
 
 
-function user_coupon($userid, $cid, $reason){
-    global $mysqli;//함수밖에서 선언된 객체(변수)를 전역 변수로
-    //user_coupons 쿠폰사용유저 테이블
-    $last_date = date("Y-m-d 23:59:59", strtotime("+30 days"));
-
-    $sql="INSERT INTO user_coupons
-    (couponid, userid, status, use_max_date, regdate, reason)
-    VALUES('".$cid."'
-    , '".$userid."'
-    , 1
-    , '".$last_date."'
-    , now()
-    , '".$reason."'
-    )";
-
-    $rs = $mysqli -> query($sql) or die("query error:".$mysqli->error);
-}
 
 
 ?>
